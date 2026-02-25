@@ -4,6 +4,7 @@ Download the source code from the following repository
 git clone https://github.com/antonio-petrillo/Progetto_IoT_Gruppo_20
 ```
 The only requirements for this step is to have `git` installed on your machine.
+
 # Create Virtual Environment
 Once you have downloaded the source code change directory into the root of the project
 ```bash
@@ -14,6 +15,7 @@ Create a python virtual environment:
 python -m venv venv
 ```
 
+[Activate venv](#venv_act)
 # Activate the virtual environment
 - MacOS / Linux / BSD `source ./venv/bin/activate`
 - Windows `.\venv\Scripts\activate`
@@ -21,8 +23,9 @@ python -m venv venv
 If you are on Windows and the system complains that the current user cannot execute scripts, ensure that your **Execution Policy** is at least setted to **RemoteSigned**.  
 If necessary, follow the following [article](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5) from Microsoft or the more concise [guide](https://sentry.io/answers/bypass-and-set-powershell-script-execution-policies/).  
 ## NOTE
-The virtual environment should be activated every time a new shell is opened in the project root.
+The virtual environment should be activated every time a new shell is opened in the project's root.
 
+[Install Dependencies](#deps)
 # Install the dependencies
 Before following this step ensure that your virtual environment is active.  
 Run the following command:
@@ -86,12 +89,12 @@ Also it is not required to use the `.env` file the default parameters expected b
 - `OUTPUT_PATH`: `out`
 - `SENSORS_FILES`: the one from the example above (it include every kind of sensor available in the dataset)
 
-# Run pipeline
+# Run the script
 Once everything is in place run the following command:
 ```bash
-python script.py
+python main.py
 ```
 
 ## NOTE
-If the scripts complain about dependencies remember to activate the [virtual environment](# Activate the virtual environment), if the problem persist also ensure that you have installed all the [dependencies](# Install the dependencies).
+If the scripts complain about dependencies remember to activate the [virtual environment](#venv_act), if the problem persist also ensure that you have installed all the [dependencies](#deps).
 
