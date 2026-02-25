@@ -2,7 +2,7 @@
 Progetto IoT - anno 2025/2026 - Gruppo 20.
 
 Antonio Petrillo - N9700496 - antonio.petrillo4@studenti.unina.it
-Alessandro Petrella - -
+Alessandro Petrella - - al.petrella@studenti.unina.it
 """
 
 # builtin libraries
@@ -29,18 +29,17 @@ import matplotlib
 matplotlib.use("SVG")
 import matplotlib.pyplot as plt
 
-# colored printing
+# utils
 from rich import print
+from dotenv import dotenv_values
 
-# TODO: load from env or argument
+CONFIG = dotenv_values(".env")
+
 DATASET_PATH = Path("./eSports_Sensors_Dataset-master") / "matches"
 OUTPUT_PATH = Path("./out")
 
-RANDOM_STATE = 0
-
 IF_PARAMS = {
     "contamination": "auto",
-    "random_state": RANDOM_STATE,
     "n_jobs": -1,
 }
 
@@ -120,7 +119,7 @@ COLOR_MAP="RdYlGn"
 
 def save_plot_2d(df, model, labels, title, path):
     clean = df.fillna(df.median(numeric_only=True)).values
-    pca = PCA(n_components=2, random_state=RANDOM_STATE)
+    pca = PCA(n_components=2)
     X_2d = pca.fit_transform(clean)
 
     var_explained = pca.explained_variance_ratio_ * 100
@@ -302,4 +301,15 @@ def pipeline():
 
 
 if __name__ == "__main__":
+    if "DATASET_PATH" in CONFIG:
+        DATASET_PATH = Path(CONFIG["DATASET_PATH"]) / "matches"
+    if "OUTPUT_PATH" in CONFIG:
+        OUTPUT_PATH = Path(CONFIG["OUTPUT_PATH"])
+    if "SENSORS_FILES" in CONFIG:
+        SENSORS_FILES = [sensor.strip() for sensor in CONFIG["SENSORS_FILES"].split(",")]
+
+    trace(f"Dataset: {DATASET_PATH}", level=LOG)
+    trace(f"Output: {OUTPUT_PATH}", level=LOG)
+    trace(f"Sensors Files to consider: {SENSORS_FILES}", level=LOG)
+
     pipeline()

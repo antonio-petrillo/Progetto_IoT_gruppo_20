@@ -1,0 +1,3 @@
+DATASET_PATH="/path/to/the/dataset/root"
+OUTPUT_PATH="/path/to/export/plot/and/reports"
+SENSORS_FILES="sensors, to, include, in, the, analysis"

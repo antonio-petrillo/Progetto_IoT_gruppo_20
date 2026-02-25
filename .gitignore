@@ -2,3 +2,4 @@ venv
 dataset
 eSports_Sensors_Dataset-master
 out
+.env
