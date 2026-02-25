@@ -15,7 +15,7 @@ Create a python virtual environment:
 python -m venv venv
 ```
 
-# [Activate the virtual environment](#venv_act)
+# Activate the virtual environment
 - MacOS / Linux / BSD `source ./venv/bin/activate`
 - Windows `.\venv\Scripts\activate`
 
@@ -24,7 +24,7 @@ If necessary, follow the following [article](https://learn.microsoft.com/en-us/p
 ## NOTE
 The virtual environment should be activated every time a new shell is opened in the project's root.
 
-# [Install the dependencies](#deps)
+# Install the dependencies
 Before following this step ensure that your virtual environment is active.  
 Run the following command:
 ```bash
@@ -94,5 +94,5 @@ python main.py
 ```
 
 ## NOTE
-If the scripts complain about dependencies remember to activate the [virtual environment](#venv_act), if the problem persist also ensure that you have installed all the [dependencies](#deps).
+If the scripts complain about dependencies remember to activate the [virtual environment](#activate-the-virtual-environment), if the problem persist also ensure that you have installed all the [dependencies](#install-the-dependencies).
 
