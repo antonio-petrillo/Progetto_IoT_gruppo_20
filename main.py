@@ -95,7 +95,7 @@ def load_sensor(path):
 
     try:
         df = pd.read_csv(path)
-        df = df.set_index("time").sort_index() # maybe it is not needed
+        df = df.set_index("time").sort_index()
         df = df.apply(pd.to_numeric, errors="coerce") # unparsable val -> NaN (maybe not needed, dataset is very clean)
         df = df.dropna(how="all") # drop Not Allowed
         return df if not df.empty else None
@@ -110,8 +110,14 @@ def run_isolation_forest(df):
     scores = model.decision_function(clean)
     return model, labels, scores
 
+RED_COLOR="#d73027"
+ORANGE_COLOR="#ffa500"
+GREY_COLOR="#444444"
+BLUE_COLOR="#4C72B0"
 
-COMMON_ARGS_HANDLES = {"c": "#d73027", "s": 30, "edgecolor": "k", "lw": 0.3}
+COMMON_ARGS = {"c": RED_COLOR, "s": 30, "edgecolor": "k", "lw": 0.3}
+COLOR_MAP="RdYlGn"
+
 def save_plot_2d(df, model, labels, title, path):
     clean = df.fillna(df.median(numeric_only=True)).values
     pca = PCA(n_components=2, random_state=RANDOM_STATE)
@@ -135,19 +141,18 @@ def save_plot_2d(df, model, labels, title, path):
         response_method="predict",
         alpha=0.4,
         ax=axes[0],
-        cmap="RdYlGn",
+        cmap=COLOR_MAP,
     )
 
     scatter1 = disp1.ax_.scatter(
         X_2d[:, 0], X_2d[:, 1],
-        c=colors, cmap="RdYlGn",
+        c=colors, cmap=COLOR_MAP,
         s=18, edgecolor="k", linewidth=0.3, zorder=5,
     )
 
     legend_handles = [
-        # plt.scatter([], [], c="#d73027", s=30, edgecolor="k", lw=0.3, label="Outlier"),
-        plt.scatter([], [], label="Outlier", **common_args_handles),
-        plt.scatter([], [], label="Inlier", **common_args_handles),
+        plt.scatter([], [], label="Outlier", **COMMON_ARGS),
+        plt.scatter([], [], label="Inlier", **COMMON_ARGS),
     ]
 
     axes[0].legend(handles=legend_handles, title="IF label", fontsize=8)
@@ -158,11 +163,11 @@ def save_plot_2d(df, model, labels, title, path):
         response_method="decision_function",
         alpha=0.5,
         ax=axes[1],
-        cmap="RdYlGn",
+        cmap=COLOR_MAP,
     )
     scatter2 = disp2.ax_.scatter(
         X_2d[:, 0], X_2d[:, 1],
-        c=colors, cmap="RdYlGn",
+        c=colors, cmap=COLOR_MAP,
         s=18, edgecolor="k", linewidth=0.3, zorder=5,
     )
     plt.colorbar(disp2.ax_.collections[1], ax=axes[1], label="Anomaly Score\n(lower = more anomalous)")
@@ -199,15 +204,15 @@ def save_plot(df, labels, scores, title, path):
     for i, col in enumerate(cols):
         ax  = axes[i]
         val = df[col].values
-        ax.plot(time_idx, val, color="#4C72B0", linewidth=0.7, alpha=0.85)
+        ax.plot(time_idx, val, color=BLUE_COLOR, linewidth=0.7, alpha=0.85)
         ax.scatter(time_idx[is_out], val[is_out], color="red", s=15, zorder=5)
         ax.set_ylabel(col, fontsize=7, labelpad=2)
         ax.tick_params(labelsize=6)
         ax.grid(True, alpha=0.25)
 
     ax_s = axes[-1]
-    ax_s.plot(time_idx, scores, color="#444444", linewidth=0.7)
-    ax_s.axhline(0, color="orange", linewidth=1, linestyle="--")
+    ax_s.plot(time_idx, scores, color=GREY_COLOR, linewidth=0.7)
+    ax_s.axhline(0, color=ORANGE_COLOR, linewidth=1, linestyle="--")
     ax_s.fill_between(time_idx, scores, 0,
                       where=(scores < 0), color="red", alpha=0.15)
     ax_s.set_ylabel("Anomaly\nScore", fontsize=8)
@@ -215,7 +220,6 @@ def save_plot(df, labels, scores, title, path):
     ax_s.tick_params(labelsize=7)
     ax_s.grid(True, alpha=0.25)
 
-    plt.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=110, bbox_inches="tight", format="svg")
     plt.close(fig)
@@ -223,6 +227,7 @@ def save_plot(df, labels, scores, title, path):
 KEY_COLUMN = "time"
 def process_player(match_id, player_id):
     in_path = DATASET_PATH / match_id / player_id
+    trace(f"Process {player_id} - START", level=LOG)
 
     dfs = []
     for sensor in SENSORS_FILES:
@@ -248,6 +253,9 @@ def process_player(match_id, player_id):
     model, labels, scores = run_isolation_forest(combined)
     out_path = OUTPUT_PATH / match_id / player_id / "sensors_combined.svg"
     save_plot_2d(combined, model, labels, f"{match_id}_{player_id}_sensors_combined", out_path)
+
+    trace(f"Process {player_id} - END", level=LOG)
+
     return combined
 
 def pipeline():
@@ -258,6 +266,8 @@ def pipeline():
     for match_id in DATASET_PATH.iterdir():
         if not match_id.exists():
             continue
+
+        trace(f"Process {match_id.name} - START", level=LOG)
 
         dfs = []
         for player_id in match_id.iterdir():
@@ -283,14 +293,13 @@ def pipeline():
         if report["most_anomalous_match"] is None or report["most_anomalous_match"]["score"] < mean:
             report["most_anomalous_match"] = {"id": match_id.name, "score": mean}
 
+        trace(f"Process {match_id.name} - END\n", level=LOG)
+
 
     report_path = OUTPUT_PATH / "report.json"
     with open(report_path, "w") as f:
         json.dump(report, f)
 
 
-def main():
-    pipeline()
-
 if __name__ == "__main__":
-    main()
+    pipeline()
