@@ -110,11 +110,11 @@ def run_isolation_forest(df):
     return model, labels, scores
 
 RED_COLOR="#d73027"
+GREEN_COLOR="#1a9850"
 ORANGE_COLOR="#ffa500"
 GREY_COLOR="#444444"
 BLUE_COLOR="#4C72B0"
 
-COMMON_ARGS = {"c": RED_COLOR, "s": 30, "edgecolor": "k", "lw": 0.3}
 COLOR_MAP="RdYlGn"
 
 def save_plot_2d(df, model, labels, title, path):
@@ -150,8 +150,8 @@ def save_plot_2d(df, model, labels, title, path):
     )
 
     legend_handles = [
-        plt.scatter([], [], label="Outlier", **COMMON_ARGS),
-        plt.scatter([], [], label="Inlier", **COMMON_ARGS),
+        plt.scatter([], [], label="Outlier", c=RED_COLOR, s=30, edgecolor="k", linewidth=0.3),
+        plt.scatter([], [], label="Inlier", c=GREEN_COLOR, s=30, edgecolor="k", linewidth=0.3),
     ]
 
     axes[0].legend(handles=legend_handles, title="IF label", fontsize=8)
@@ -281,6 +281,11 @@ def pipeline():
             dfs.append(df.rename(columns = cols))
 
         combined = reduce(lambda l, r: l.join(r, how="inner"), dfs)
+
+        if combined.empty:
+            trace(f"Players in this match don't have a common timestamp, can't permorf Isolation Forest analysis on match {match_id}", level=WARN)
+            continue
+
         model, labels, scores = run_isolation_forest(combined)
         out_path = OUTPUT_PATH / match_id.name / "all_players.svg"
         save_plot_2d(combined, model, labels, f"{match_id.name}_all_players_combined", out_path)
