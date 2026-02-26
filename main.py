@@ -1,8 +1,8 @@
 """
 Progetto IoT - anno 2025/2026 - Gruppo 20.
 
-Antonio Petrillo - N9700496 - antonio.petrillo4@studenti.unina.it
-Alessandro Petrella - - al.petrella@studenti.unina.it
+Antonio Petrillo - N97000496 - antonio.petrillo4@studenti.unina.it
+Alessandro Petrella - DE5000053 - al.petrella@studenti.unina.it
 """
 
 # builtin libraries

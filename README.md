@@ -1,3 +1,11 @@
+# Project IOT 2025/2026 - Group 20
+Repository for the IOT project, academic year 2025/2026.  
+
+| Student             | Matricola | Email                               |
+|---------------------|-----------|-------------------------------------|
+| Antonio Petrillo    | N97000496 | antonio.petrillo4@studenti.unina.it |
+| Alessandro Petrella | DE5000053 | al.petrella@studenti.unina.it       |
+
 # Download
 Download the source code from the following repository
 ```bash
